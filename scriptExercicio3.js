@@ -9,17 +9,29 @@ buttonSearch.onclick = function (){
             renderResult(response);
         })
         .catch(function(error){
-            
+            if(error.request)                  
+                messageError(error.request.status);            
         });
 }
 
-function renderResult(result) {  
-    
-    if (document.querySelector('#listRepository li')) {
-        while (ulRepositoryElement.firstChild) {
-            ulRepositoryElement.removeChild(ulRepositoryElement.firstChild);
-        }
+function messageError(codError){
+    clearUlRepository();
+    if(codError === 404){
+        var errorRepositoryElement = document.createElement('p');
+        var errorText = document.createTextNode("User not found");
+
+        errorRepositoryElement.style.color = '#f00';
+        errorRepositoryElement.style.fontSize = '18px';
+        errorRepositoryElement.appendChild(errorText);
+
+        ulRepositoryElement.appendChild(errorRepositoryElement);
     }
+}
+        
+
+function renderResult(result) {
+
+    clearUlRepository();
   
    for (repository of result.data) {
         var liRepositoryElement = document.createElement('li');
@@ -31,4 +43,12 @@ function renderResult(result) {
     }
 
     inputUserGithub.value = '';
+}
+
+function clearUlRepository(){
+    if (document.querySelector('#listRepository li') || document.querySelector('#listRepository p') ) {
+        while (ulRepositoryElement.firstChild) {
+            ulRepositoryElement.removeChild(ulRepositoryElement.firstChild);
+        }
+    }
 }
